@@ -25,17 +25,17 @@ def convert_line(line):
     if len(xmlline) == 0:
         return xmlline
 
-    for marker in sorted(configuration.configuration, key=len, reverse=True):
+    for marker in configuration.get_configuration():
         config_element = configuration.get_configuration(marker)
-        xmlline = xmlline.replace(marker, config_element.begin)
-        if xmlline.count(config_element.begin) % 2 != 0:
-            xmlline += config_element.begin
-        marker_occurrences = [(a.start(), a.end()) for a in list(re.finditer(re.escape(config_element.begin), xmlline))]
+        xmlline = xmlline.replace(marker, config_element.get_begin())
+        if xmlline.count(config_element.get_begin()) % 2 != 0:
+            xmlline += config_element.get_begin()
+        marker_occurrences = [(a.start(), a.end()) for a in list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
         for i in marker_occurrences[1::2]:
-            xmlline = xmlline[:i[0]] + config_element.end + xmlline[i[1]:]
+            xmlline = xmlline[:i[0]] + config_element.get_end() + xmlline[i[1]:]
     if not xmlline.startswith('<'):
-        xmlline = configuration.get_configuration('default').begin + xmlline + configuration.get_configuration(
-            'default').end
+        default_element = configuration.get_configuration('default')
+        xmlline = default_element.get_begin() + xmlline + default_element.get_end()
 
     return xmlline
 
