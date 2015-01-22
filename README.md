@@ -10,3 +10,4 @@ Each configuration element has a starting and ending tag (although currently I a
 The main file is de ***mdxml.py***, you can start the application calling this file.
 
 Currently I am under developing the first usable version, so stay tuned and do not complain about seeing test-code in the files :)
+But feel free to create issues and change requests.
