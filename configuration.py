@@ -13,7 +13,7 @@ class Configuration:
         return self.marker + " --> " + self.begin + " " +  self.end
 
 sourcecode_added = False
-configuration = []
+configuration = {}
 
 
 def load_configuration(config_file="mdxml.conf"):
@@ -29,8 +29,8 @@ def load_configuration(config_file="mdxml.conf"):
             end =params[2]
         else:
             end =None
-        configuration.append(Configuration(marker, begin, end))
+        configuration[marker] = (Configuration(marker, begin, end))
 
 def print_configuration():
-    for configuration_element in configuration:
-        print configuration_element
+    for key in configuration:
+        print configuration[key]
