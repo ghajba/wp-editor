@@ -13,8 +13,10 @@ def convert_line(line):
     """
     This method converts a line of markdown to specified XML. Currently hard-coded.
 
-    First it looks if the line has some propeties at the beginning and changes the structure according to this.
-    Than it goes through the line and parses known in-line markdowns and changes them to XML.
+    The algorithm is really a wood-cutter: replace all occurrences of the markers and correct the closing tags.
+
+    If one tag is not closed, it gets closed at the end of the line -- so currently there are no multi-line tags
+    available.
 
     :param line: the line to convert
     :return: the line formatted as XML
@@ -43,7 +45,7 @@ def read_mdfile(filename):
     input_lines = input_file.readlines()
     input_file.close()
 
-    output_file = open(filename.rsplit('.', 1)[0]+".xml", 'w')
+    output_file = open(filename.rsplit('.', 1)[0] + ".xml", 'w')
     for line in input_lines:
         if len(line.strip()) == 0:
             continue
