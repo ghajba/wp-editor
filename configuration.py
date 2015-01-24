@@ -28,7 +28,8 @@ class ConfigurationElement:
 
 class Configuration:
     def __init__(self):
-        self.__sourcecode_added = False
+        self.__multiline_added = False
+        self.__multiline_marker = None
         self.__configuration = {}
         self.__markers = []
         self.__default = None
@@ -75,8 +76,17 @@ class Configuration:
         for key in self.__configuration:
             print self.__configuration[key]
 
-    def is_sourcecode(self):
-        return self.__sourcecode_added
+    def is_multiline(self):
+        return self.__multiline_added
 
-    def alter_sourcecode(self):
-        self.__sourcecode_added = not self.__sourcecode_added
+    def alter_multiline(self, actual_marker):
+        if not self.__configuration[actual_marker].is_multiline():
+            return False
+        if self.__multiline_added and not self.__multiline_marker == actual_marker:
+            return False
+        if self.__multiline_added:
+            self.__multiline_marker = None
+        else:
+            self.__multiline_marker = actual_marker
+        self.__multiline_added = not self.__multiline_added
+        return True

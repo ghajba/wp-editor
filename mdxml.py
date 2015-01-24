@@ -27,13 +27,27 @@ def convert_line(line):
 
     for marker in configuration.get_configuration():
         config_element = configuration.get_configuration(marker)
+        marker_count = xmlline.count(marker)
+        if marker_count == 0:
+            continue
+        if marker_count == 1 and configuration.alter_multiline(marker):
+            xmlline = xmlline.replace(marker, (
+                config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
+            return xmlline
+
+        if configuration.is_multiline():
+            return xmlline
+
         xmlline = xmlline.replace(marker, config_element.get_begin())
+        if configuration.alter_multiline(marker):
+            return xmlline
         if xmlline.count(config_element.get_begin()) % 2 != 0:
             xmlline += config_element.get_begin()
-        marker_occurrences = [(a.start(), a.end()) for a in list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
+        marker_occurrences = [(a.start(), a.end()) for a in
+                              list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
         for i in marker_occurrences[1::2]:
             xmlline = xmlline[:i[0]] + config_element.get_end() + xmlline[i[1]:]
-    if not xmlline.startswith('<'):
+    if not xmlline.startswith('<') and not configuration.is_multiline():
         default_element = configuration.get_default()
         xmlline = default_element.get_begin() + xmlline + default_element.get_end()
 
@@ -57,5 +71,7 @@ def read_mdfile(filename):
 
 configuration = Configuration()
 configuration.load_configuration()
+
+# configuration.print_configuration()
 
 read_mdfile("testfile.md")
