@@ -34,7 +34,7 @@ def convert_line(line):
         for i in marker_occurrences[1::2]:
             xmlline = xmlline[:i[0]] + config_element.get_end() + xmlline[i[1]:]
     if not xmlline.startswith('<'):
-        default_element = configuration.get_configuration('default')
+        default_element = configuration.get_default()
         xmlline = default_element.get_begin() + xmlline + default_element.get_end()
 
     return xmlline

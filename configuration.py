@@ -27,6 +27,7 @@ class Configuration:
         self.__sourcecode_added = False
         self.__configuration = {}
         self.__markers = []
+        self.__default = None
 
     def load_configuration(self, config_file="mdxml.conf"):
         """
@@ -44,7 +45,10 @@ class Configuration:
                 end = params[2]
             else:
                 end = None
-            self.__configuration[marker] = (ConfigurationElement(marker, begin, end))
+            if "default" == marker:
+                self.__default = ConfigurationElement(marker, begin, end)
+            else:
+                self.__configuration[marker] = ConfigurationElement(marker, begin, end)
 
     def get_configuration(self, marker=None):
         """
@@ -56,6 +60,9 @@ class Configuration:
         if marker in self.__configuration:
             return self.__configuration[marker]
         return None
+
+    def get_default(self):
+        return self.__default
 
     def get_markers(self):
         for marker in self.__configuration:
