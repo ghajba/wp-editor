@@ -4,13 +4,14 @@ This file loads and maintains the configuration of the application
 
 
 class ConfigurationElement:
-    def __init__(self, marker, begin, end=None):
+    def __init__(self, marker, begin, end=None, multiline=False):
         self.__marker = marker
         self.__begin = begin
         self.__end = end
+        self.__multiline = multiline
 
     def __str__(self):
-        return self.__marker + " --> " + self.__begin + " " + self.__end
+        return self.__marker + " --> " + self.__begin + " " + self.__end + ( " multi-line" if self.__multiline else "")
 
     def get_begin(self):
         return self.__begin
@@ -20,6 +21,9 @@ class ConfigurationElement:
 
     def get_end(self):
         return self.__end
+
+    def is_multiline(self):
+        return self.__multiline
 
 
 class Configuration:
@@ -41,14 +45,17 @@ class Configuration:
             params = line.split()
             marker = params[0]
             begin = params[1]
+            multiline = False
             if len(params) >= 3:
                 end = params[2]
             else:
                 end = None
+            if len(params) > 3:
+                multiline = True
             if "default" == marker:
                 self.__default = ConfigurationElement(marker, begin, end)
             else:
-                self.__configuration[marker] = ConfigurationElement(marker, begin, end)
+                self.__configuration[marker] = ConfigurationElement(marker, begin, end, multiline)
 
     def get_configuration(self, marker=None):
         """
@@ -64,11 +71,12 @@ class Configuration:
     def get_default(self):
         return self.__default
 
-    def get_markers(self):
-        for marker in self.__configuration:
-            pass
-        pass
-
     def print_configuration(self):
         for key in self.__configuration:
             print self.__configuration[key]
+
+    def is_sourcecode(self):
+        return self.__sourcecode_added
+
+    def alter_sourcecode(self):
+        self.__sourcecode_added = not self.__sourcecode_added
