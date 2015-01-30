@@ -75,3 +75,4 @@ configuration.load_configuration()
 # configuration.print_configuration()
 
 read_mdfile("testfile.md")
+read_mdfile("first_test_post.md")

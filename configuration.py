@@ -26,6 +26,7 @@ class ConfigurationElement:
         return self.__multiline
 
 
+#TODO add possibility to have multiple categories of configurations like starter, complex and multiline
 class Configuration:
     def __init__(self):
         self.__multiline_added = False
@@ -51,6 +52,7 @@ class Configuration:
                 end = params[2]
             else:
                 end = None
+        # TODO add variable configuration for fourth parameter, for example M for multiline, S for starter, C for complex
             if len(params) > 3:
                 multiline = True
             if "default" == marker:
