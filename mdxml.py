@@ -46,7 +46,8 @@ def convert_line(line):
         marker_occurrences = [(a.start(), a.end()) for a in
                               list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
         for i in marker_occurrences[1::2]:
-            xmlline = xmlline[:i[0]] + config_element.get_end() + xmlline[i[1]:]
+            xmlline = xmlline[:i[0]] \
+                      + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
     if not xmlline.startswith('<') and not configuration.is_multiline():
         default_element = configuration.get_default()
         xmlline = default_element.get_begin() + xmlline + default_element.get_end()
@@ -75,3 +76,4 @@ configuration.load_configuration()
 # configuration.print_configuration()
 
 read_mdfile("testfile.md")
+read_mdfile("first_test_post.md")
