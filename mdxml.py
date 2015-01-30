@@ -25,7 +25,19 @@ def convert_line(line):
     if len(xmlline) == 0:
         return xmlline
 
-    for marker in configuration.get_configuration():
+    for marker in configuration.get_starters():
+        if line.startswith(marker):
+            config_element = configuration.get_configuration(marker)
+            xmlline = xmlline.replace(marker, config_element.get_begin())
+            if xmlline.count(config_element.get_begin()) % 2 != 0:
+                xmlline += config_element.get_begin()
+            marker_occurrences = [(a.start(), a.end()) for a in
+                              list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
+            for i in marker_occurrences[1::2]:
+                xmlline = xmlline[:i[0]] \
+                      + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
+
+    for marker in configuration.get_normal():
         config_element = configuration.get_configuration(marker)
         marker_count = xmlline.count(marker)
         if marker_count == 0:
@@ -73,7 +85,6 @@ def read_mdfile(filename):
 configuration = Configuration()
 configuration.load_configuration()
 
-# configuration.print_configuration()
+#configuration.print_configuration()
 
 read_mdfile("testfile.md")
-read_mdfile("first_test_post.md")

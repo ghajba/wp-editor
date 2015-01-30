@@ -4,14 +4,19 @@ This file loads and maintains the configuration of the application
 
 
 class ConfigurationElement:
-    def __init__(self, marker, begin, end=None, multiline=False):
+    def __init__(self, marker, begin, end=None, multiline=False, starter=False, complex=False):
         self.__marker = marker
         self.__begin = begin
         self.__end = end
         self.__multiline = multiline
+        self.__starter = starter
+        self.__complex = complex
 
     def __str__(self):
-        return self.__marker + " --> " + self.__begin + " " + self.__end + ( " multi-line" if self.__multiline else "")
+        return self.__marker + " --> " + self.__begin + " " + (self.__end if self.__end is not None else "") \
+               + (" multi-line" if self.__multiline else "") \
+               + (" starter" if self.is_starter() else "") \
+               + (" complex" if self.is_complex() else "")
 
     def get_begin(self):
         return self.__begin
@@ -25,8 +30,14 @@ class ConfigurationElement:
     def is_multiline(self):
         return self.__multiline
 
+    def is_complex(self):
+        return self.__complex
 
-#TODO add possibility to have multiple categories of configurations like starter, complex and multiline
+    def is_starter(self):
+        return self.__starter
+
+
+# TODO add possibility to have multiple categories of configurations like starter, complex and multiline
 class Configuration:
     def __init__(self):
         self.__multiline_added = False
@@ -48,17 +59,24 @@ class Configuration:
             marker = params[0]
             begin = params[1]
             multiline = False
+            starter = False
+            complex = False
             if len(params) >= 3:
                 end = params[2]
             else:
                 end = None
-        # TODO add variable configuration for fourth parameter, for example M for multiline, S for starter, C for complex
+                # TODO add variable configuration for fourth parameter, for example M for multiline, S for starter, C for complex
             if len(params) > 3:
-                multiline = True
+                if "M" == params[3]:
+                    multiline = True
+                elif "S" == params[3]:
+                    starter = True
+                elif "C" == params[3]:
+                    complex = True
             if "default" == marker:
                 self.__default = ConfigurationElement(marker, begin, end)
             else:
-                self.__configuration[marker] = ConfigurationElement(marker, begin, end, multiline)
+                self.__configuration[marker] = ConfigurationElement(marker, begin, end, multiline, starter, complex)
 
     def get_configuration(self, marker=None):
         """
@@ -92,3 +110,15 @@ class Configuration:
             self.__multiline_marker = actual_marker
         self.__multiline_added = not self.__multiline_added
         return True
+
+    def get_starters(self):
+        """This method returns all configuration elements which can appear only at the beginning of a line"""
+        return sorted([k for k, v in self.__configuration.items() if v.is_starter()], key=len, reverse=True)
+
+    def get_comlex(self):
+        """This method returns all the complex configuration elements"""
+        return sorted([k for k, v in self.__configuration.items() if v.is_complex()], key=len, reverse=True)
+
+    def get_normal(self):
+        """This method returns the normal configuration elements which are not complex and not starter"""
+        return sorted([k for k, v in self.__configuration.items() if not v.is_starter() and not v.is_complex()],key=len, reverse=True)
