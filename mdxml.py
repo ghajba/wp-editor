@@ -28,11 +28,13 @@ def convert_line(line):
     for marker in configuration.get_starters():
         if line.startswith(marker):
             config_element = configuration.get_configuration(marker)
-            xmlline = xmlline.replace(marker, config_element.get_begin())
+            xmlline = xmlline.replace(marker, config_element.get_begin(),1)
+            occurrences = find_marker_occurrences(xmlline, marker)
+            if len(occurrences) > 0:
+                xmlline = xmlline[:occurrences[-1][0]] + xmlline[occurrences[-1][1]:]
             if xmlline.count(config_element.get_begin()) % 2 != 0:
                 xmlline += config_element.get_begin()
-            marker_occurrences = [(a.start(), a.end()) for a in
-                              list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
+            marker_occurrences = find_marker_occurrences(xmlline, config_element.get_begin())
             for i in marker_occurrences[1::2]:
                 xmlline = xmlline[:i[0]] \
                       + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
@@ -55,8 +57,7 @@ def convert_line(line):
             return xmlline
         if xmlline.count(config_element.get_begin()) % 2 != 0:
             xmlline += config_element.get_begin()
-        marker_occurrences = [(a.start(), a.end()) for a in
-                              list(re.finditer(re.escape(config_element.get_begin()), xmlline))]
+        marker_occurrences = find_marker_occurrences(xmlline, config_element.get_begin())
         for i in marker_occurrences[1::2]:
             xmlline = xmlline[:i[0]] \
                       + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
@@ -65,6 +66,10 @@ def convert_line(line):
         xmlline = default_element.get_begin() + xmlline + default_element.get_end()
 
     return xmlline
+
+
+def find_marker_occurrences(xmlline, marker):
+    return [(a.start(), a.end()) for a in list(re.finditer(re.escape(marker), xmlline))]
 
 
 def read_mdfile(filename):
