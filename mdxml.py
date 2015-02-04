@@ -10,6 +10,8 @@ import re
 from markdown import markdown
 import codecs
 
+configuration = Configuration()
+
 
 def convert_line(line):
     """
@@ -23,6 +25,7 @@ def convert_line(line):
     :param line: the line to convert
     :return: the line formatted as XML
     """
+    global configuration
     xmlline = line.strip()
     if len(xmlline) == 0:
         return xmlline, False
@@ -33,7 +36,7 @@ def convert_line(line):
 
         if marker_count == 1 and configuration.alter_multiline(marker):
             xmlline = xmlline.replace(marker, (
-            config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
+                config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
             return xmlline + "\n", True
 
         if configuration.is_multiline():
@@ -74,23 +77,28 @@ def find_marker_occurrences(xmlline, marker):
     return [(a.start(), a.end()) for a in list(re.finditer(re.escape(marker), xmlline))]
 
 
-def read_md_file(filename):
+def convert_md_file(filename):
     input_file = codecs.open(filename, mode="r", encoding="utf-8")
     input_lines = input_file.readlines()
     input_file.close()
+    return convert_lines(input_lines)
 
-    output_file = codecs.open(filename.rsplit('.', 1)[0] + ".xml", "w",
+
+def write_xml_file(filename, content):
+    output_file = codecs.open(filename, "w",
                               encoding="utf-8",
-                              errors="xmlcharrefreplace"
-    )
-    output_file.write(convert_lines(input_lines))
+                              errors="xmlcharrefreplace")
+    output_file.write(content)
     output_file.flush()
     output_file.close()
 
 
-configuration = Configuration()
-configuration.load_configuration()
+def init():
+    global configuration
+    configuration.load_configuration()
 
 # configuration.print_configuration()
 
-read_md_file("testfile.md")
+if __name__ == "__main__":
+    init()
+    write_xml_file("testfile.xml", convert_md_file("testfile.md"))
