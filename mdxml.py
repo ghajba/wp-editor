@@ -7,6 +7,8 @@ along the defined rules of the conversion.
 
 from configuration import Configuration
 import re
+from markdown import markdown
+import codecs
 
 
 def convert_line(line):
@@ -23,73 +25,72 @@ def convert_line(line):
     """
     xmlline = line.strip()
     if len(xmlline) == 0:
-        return xmlline
-
-    for marker in configuration.get_starters():
-        if line.startswith(marker):
-            config_element = configuration.get_configuration(marker)
-            xmlline = xmlline.replace(marker, config_element.get_begin(),1)
-            occurrences = find_marker_occurrences(xmlline, marker)
-            if len(occurrences) > 0:
-                xmlline = xmlline[:occurrences[-1][0]] + xmlline[occurrences[-1][1]:]
-            if xmlline.count(config_element.get_begin()) % 2 != 0:
-                xmlline += config_element.get_begin()
-            marker_occurrences = find_marker_occurrences(xmlline, config_element.get_begin())
-            for i in marker_occurrences[1::2]:
-                xmlline = xmlline[:i[0]] \
-                      + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
+        return xmlline, False
 
     for marker in configuration.get_normal():
         config_element = configuration.get_configuration(marker)
         marker_count = xmlline.count(marker)
-        if marker_count == 0:
-            continue
+
         if marker_count == 1 and configuration.alter_multiline(marker):
             xmlline = xmlline.replace(marker, (
-                config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
-            return xmlline
+            config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
+            return xmlline + "\n", True
 
         if configuration.is_multiline():
-            return xmlline
+            return xmlline + "\n", True
 
+        if marker_count == 0:
+            continue
         xmlline = xmlline.replace(marker, config_element.get_begin())
-        if configuration.alter_multiline(marker):
-            return xmlline
         if xmlline.count(config_element.get_begin()) % 2 != 0:
             xmlline += config_element.get_begin()
-        marker_occurrences = find_marker_occurrences(xmlline, config_element.get_begin())
-        for i in marker_occurrences[1::2]:
-            xmlline = xmlline[:i[0]] \
-                      + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
-    if not xmlline.startswith('<') and not configuration.is_multiline():
-        default_element = configuration.get_default()
-        xmlline = default_element.get_begin() + xmlline + default_element.get_end()
+            marker_occurrences = find_marker_occurrences(xmlline, config_element.get_begin())
+            for i in marker_occurrences[1::2]:
+                xmlline = xmlline[:i[0]] \
+                          + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
 
-    return xmlline
+    return xmlline + "\n", False
+
+
+def convert_lines(lines):
+    final_text = ""
+    temp = ""
+    for line in lines:
+        result, final = convert_line(line)
+        if final:
+            if len(temp) != 0:
+                final_text += markdown(temp) + "\n"
+                temp = ""
+            final_text += result
+        else:
+            temp += result + "\n"
+
+    if len(temp) != 0:
+        final_text += markdown(temp) + "\n"
+    return final_text
 
 
 def find_marker_occurrences(xmlline, marker):
     return [(a.start(), a.end()) for a in list(re.finditer(re.escape(marker), xmlline))]
 
 
-def read_mdfile(filename):
-    input_file = open(filename)
+def read_md_file(filename):
+    input_file = codecs.open(filename, mode="r", encoding="utf-8")
     input_lines = input_file.readlines()
     input_file.close()
 
-    output_file = open(filename.rsplit('.', 1)[0] + ".xml", 'w')
-    for line in input_lines:
-        if len(line.strip()) == 0:
-            continue
-        output_file.write(convert_line(line))
-        output_file.write("\n")
-        output_file.flush()
+    output_file = codecs.open(filename.rsplit('.', 1)[0] + ".xml", "w",
+                              encoding="utf-8",
+                              errors="xmlcharrefreplace"
+    )
+    output_file.write(convert_lines(input_lines))
+    output_file.flush()
     output_file.close()
 
 
 configuration = Configuration()
 configuration.load_configuration()
 
-#configuration.print_configuration()
+# configuration.print_configuration()
 
-read_mdfile("testfile.md")
+read_md_file("testfile.md")
