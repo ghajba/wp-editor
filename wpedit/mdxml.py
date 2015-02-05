@@ -29,25 +29,25 @@ def convert_line(line):
     :return: the line formatted as XML
     """
     global configuration
-    xmlline = line.strip()
-    if len(xmlline) == 0:
-        return xmlline, False
+    xmlline = line
+    # if len(xmlline) == 0:
+    #     return line, False
 
     for marker in configuration.get_normal():
         config_element = configuration.get_configuration(marker)
-        marker_count = xmlline.count(marker)
+        marker_count = line.count(marker)
 
         if marker_count == 1 and configuration.alter_multiline(marker):
-            xmlline = xmlline.replace(marker, (
+            xmlline = line.replace(marker, (
                 config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
-            return xmlline + "\n", True
+            return xmlline, True
 
         if configuration.is_multiline():
-            return xmlline + "\n", True
+            return line, True
 
         if marker_count == 0:
             continue
-        xmlline = xmlline.replace(marker, config_element.get_begin())
+        xmlline = line.strip().replace(marker, config_element.get_begin())
         if xmlline.count(config_element.get_begin()) % 2 != 0:
             xmlline += config_element.get_begin()
             marker_occurrences = find_marker_occurrences(xmlline, config_element.get_begin())
@@ -55,7 +55,7 @@ def convert_line(line):
                 xmlline = xmlline[:i[0]] \
                           + (config_element.get_end() if config_element.get_end() is not None else "") + xmlline[i[1]:]
 
-    return xmlline + "\n", False
+    return xmlline, False
 
 
 def convert_lines(lines):
