@@ -5,10 +5,13 @@ The main idea behind this app is to take a markdown file, parse it line-by-line 
 along the defined rules of the conversion.
 """
 
-from configuration import Configuration
 import re
-from markdown import markdown
 import codecs
+
+from markdown import markdown
+
+from configuration import Configuration
+
 
 configuration = Configuration()
 
@@ -66,7 +69,7 @@ def convert_lines(lines):
                 temp = ""
             final_text += result
         else:
-            temp += result + "\n"
+            temp += result
 
     if len(temp) != 0:
         final_text += markdown(temp) + "\n"
@@ -101,4 +104,4 @@ def init():
 
 if __name__ == "__main__":
     init()
-    write_xml_file("testfile.xml", convert_md_file("testfile.md"))
+    write_xml_file("../testfile.xml", convert_md_file("../testfile.md"))
