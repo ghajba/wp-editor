@@ -2,6 +2,7 @@
 This file loads and maintains the configuration of the application
 """
 
+import os
 
 class ConfigurationElement:
     def __init__(self, marker, begin, end=None, multiline=False, starter=False, complex=False):
@@ -46,7 +47,7 @@ class Configuration:
         self.__markers = []
         self.__default = None
 
-    def load_configuration(self, config_file="mdxml.conf"):
+    def load_configuration(self, config_file=os.path.join(os.path.dirname(__file__), "mdxml.conf")):
         """
         :param config_file: the file where the configuration is stored
         """

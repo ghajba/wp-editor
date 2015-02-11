@@ -13,6 +13,7 @@ def convert_file(filename):
     title = None
     categories = None
     tags = None
+    id = None
     for line in input_lines:
         if not line.startswith("["):
             break
@@ -23,25 +24,39 @@ def convert_file(filename):
             categories = line[12:].split(",")
         elif line.startswith("[tags]"):
             tags = line[6:].split(",")
+        elif line.startswith("[id]"):
+            id = line[4:]
     content = mdxml.convert_lines(input_lines[starter:])
-    return title, categories, tags, content
+    return id, title, categories, tags, content
 
 
-def send_to_wordpress(title, categories, tags, content, configuration):
+def send_to_wordpress(id, title, categories, tags, content, configuration):
     if len(content.strip()) == 0:
         return
 
-    post = WordPressPost()
+    client = Client(configuration['endpoint'], configuration["username"], configuration['password'])
+
+    if id:
+        post = client.call(posts.GetPost(id))
+        pass
+    else:
+        post = WordPressPost()
     post.content = content
-    post.title = 'My post'
     if title is not None:
         post.title = title
+    if post.title is None:
+        post.title = 'My post'
     post.terms_names = {
         'post_tag': tags,
         'category': categories,
     }
-    client = Client(configuration['endpoint'], configuration["username"], configuration['password'])
-    post.id = client.call(posts.NewPost(post))
+
+    if id:
+        client.call(posts.EditPost(post.id, post))
+    else:
+        post.id = client.call(posts.NewPost(post))
+
+    print "Blog post with id " + post.id + " was successfully sent to WordPress."
 
 
 if __name__ == "__main__":
@@ -56,5 +71,5 @@ if __name__ == "__main__":
     execfile(args.config_file, configuration)
 
     mdxml.init()
-    title, categories, tags, content = convert_file(args.post_file)
-    send_to_wordpress(title, categories, tags, content, configuration)
+    id, title, categories, tags, content = convert_file(args.post_file)
+    send_to_wordpress(id, title, categories, tags, content, configuration)
