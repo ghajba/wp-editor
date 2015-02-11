@@ -21,29 +21,32 @@ The application looks for the configuration file (containing wordpress endpoint,
 
 
 ## Usage
-wpedit.py [-h] [-c CONFIG] [-m MDCONF] post_file
+    wpedit.py [-h] [-c CONFIG] [-m MDCONF] post_file
 
-positional arguments:
-  post_file             The full path of the input file to send to WordPress.
+    positional arguments:
+        post_file               The full path of the input file to send to WordPress.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CONFIG, --config CONFIG
-                        The full path of the configuration file storing the
-                        XML-RPC endpoint, username and password. Per default
-                        the application looks at your home folder and searches
-                        for wpedit.conf
-  -m MDCONF, --mdconf MDCONF
-                        The full path of the md-to-xml conversion-extension
-                        file
+    optional arguments:
+        -h, --help              show this help message and exit
+        -c CONFIG, --config CONFIG
+                                The full path of the configuration file storing the
+                                XML-RPC endpoint, username and password. Per default
+                                the application looks at your home folder and searches
+                                for wpedit.conf
+        -m MDCONF, --mdconf MDCONF
+                                The full path of the md-to-xml conversion-extension
+                                file
                         
 ## File structure
-The markdown file is parsed and you can place special lines at the beginning of the text. These special lines have to start with *[*. Once the parser encounters a line which does not start with *[* the resulting text is treated as the content of the article.
+The markdown file is parsed and you can place special lines at the beginning of the text. These special lines have to start with **[** (square bracket). Once the parser encounters a line which does not start with **[** the resulting text is treated as the content of the article.
 
 ### Accepted special lines
 [id] 1001 -- the ID of the blog post, if you create a new post, you do not have to provide an ID, **Note** if you provide an ID, the application attempts to edit the post with this ID.
+
 [title] Some title -- you can specify the post's title here, in the example "Some title" will be the title of the article. If you do not provide a title and the post does not have a title, the title will be set to "My post".
+
 [categories] Category 1, Category 2 -- a comma separated list of categories for your post. Optional, if not provided there will be no categories set.
+
 [tags] tag 1, tag 2, tag 3 -- a comma separated list for your post. Optional, if not provided there will be no tags set.
                       
 ## Extra markdown
