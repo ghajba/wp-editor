@@ -80,11 +80,14 @@ def find_marker_occurrences(xmlline, marker):
     return [(a.start(), a.end()) for a in list(re.finditer(re.escape(marker), xmlline))]
 
 
-def convert_md_file(filename):
+def get_file_lines(filename):
     input_file = codecs.open(filename, mode="r", encoding="utf-8")
     input_lines = input_file.readlines()
     input_file.close()
-    return convert_lines(input_lines)
+    return input_lines
+
+def convert_md_file(filename):
+    return convert_lines(get_file_lines(filename))
 
 
 def write_xml_file(filename, content):
@@ -105,3 +108,4 @@ def init():
 if __name__ == "__main__":
     init()
     write_xml_file("../testfile.xml", convert_md_file("../testfile.md"))
+    write_xml_file("/Users/GHajba/Documents/wordpress_articles/Ordering_files.xml", convert_md_file("/Users/GHajba/Documents/wordpress_articles/Ordering_files.md"))
