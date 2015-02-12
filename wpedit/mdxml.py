@@ -38,11 +38,11 @@ def convert_line(line):
         if marker_count == 1 and configuration.alter_multiline(marker):
             xmlline = config_element.get_begin() if configuration.is_multiline() else config_element.get_end()
             xmlline += "\n"
-            placeholder = " "
+            placeholder = ""
             if len(line.strip()[len(marker):]) > 0:
                 conf = eval(line.strip()[len(marker):])
                 for key in conf:
-                    placeholder += key + "=\"" + conf[key] + "\" "
+                    placeholder += " " + key + "=\"" + conf[key] + "\""
             return xmlline.format(placeholder), True
 
         if configuration.is_multiline():
