@@ -5,6 +5,7 @@ import mdxml
 from wordpress_xmlrpc import Client
 from wordpress_xmlrpc import WordPressPost
 from wordpress_xmlrpc.methods import posts
+from os.path import expanduser
 
 
 def convert_file(filename):
@@ -61,14 +62,17 @@ def send_to_wordpress(id, title, categories, tags, content, configuration):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("config_file",
-                        help="The full path of the configuration file storing the XML-RPC endpoint, username and password.")
+    parser.add_argument("-c","--config",
+                        help="The full path of the configuration file storing the XML-RPC endpoint, username and password. Per default the application looks at your home folder and searches for wpedit.conf")
     parser.add_argument("post_file", help="The full path of the input file to send to WordPress.")
-    parser.add_argument("-c", "--mdconf", help="The full path of the md-to-xml conversion-extension file")
+    parser.add_argument("-m", "--mdconf", help="The full path of the md-to-xml conversion-extension file")
     args = parser.parse_args()
 
     configuration = {}
-    execfile(args.config_file, configuration)
+    config_file = expanduser("~")+'/wpedit.conf'
+    if args.config:
+        config_file = args.config
+    execfile(config_file, configuration)
 
     mdxml.init()
     id, title, categories, tags, content = convert_file(args.post_file)
