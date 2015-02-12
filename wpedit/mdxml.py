@@ -38,10 +38,12 @@ def convert_line(line):
         if marker_count == 1 and configuration.alter_multiline(marker):
             xmlline = config_element.get_begin() if configuration.is_multiline() else config_element.get_end()
             xmlline += "\n"
+            placeholder = " "
             if len(line.strip()[len(marker):]) > 0:
-                definition = line.strip()[len(marker):]
-                conf = eval(definition)
-            return xmlline, True
+                conf = eval(line.strip()[len(marker):])
+                for key in conf:
+                    placeholder += key + "=\"" + conf[key] + "\" "
+            return xmlline.format(placeholder), True
 
         if configuration.is_multiline():
             return line, True
@@ -87,6 +89,7 @@ def get_file_lines(filename):
     input_file.close()
     return input_lines
 
+
 def convert_md_file(filename):
     return convert_lines(get_file_lines(filename))
 
@@ -104,7 +107,10 @@ def init():
     global configuration
     configuration.load_configuration()
 
+
 if __name__ == "__main__":
     init()
     import os
-    write_xml_file(os.path.join(os.path.dirname(__file__), "../testfile.xml"), convert_md_file(os.path.join(os.path.dirname(__file__), "../testfile.md")))
+
+    write_xml_file(os.path.join(os.path.dirname(__file__), "../testfile.xml"),
+                   convert_md_file(os.path.join(os.path.dirname(__file__), "../testfile.md")))
