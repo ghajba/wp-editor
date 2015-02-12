@@ -30,16 +30,17 @@ def convert_line(line):
     """
     global configuration
     xmlline = line
-    # if len(xmlline) == 0:
-    #     return line, False
 
     for marker in configuration.get_normal():
         config_element = configuration.get_configuration(marker)
         marker_count = line.count(marker)
 
         if marker_count == 1 and configuration.alter_multiline(marker):
-            xmlline = line.replace(marker, (
-                config_element.get_begin() if configuration.is_multiline() else config_element.get_end()))
+            xmlline = config_element.get_begin() if configuration.is_multiline() else config_element.get_end()
+            xmlline += "\n"
+            if len(line.strip()[len(marker):]) > 0:
+                definition = line.strip()[len(marker):]
+                conf = eval(definition)
             return xmlline, True
 
         if configuration.is_multiline():
@@ -103,9 +104,7 @@ def init():
     global configuration
     configuration.load_configuration()
 
-# configuration.print_configuration()
-
 if __name__ == "__main__":
     init()
-    write_xml_file("../testfile.xml", convert_md_file("../testfile.md"))
-    write_xml_file("/Users/GHajba/Documents/wordpress_articles/Ordering_files.xml", convert_md_file("/Users/GHajba/Documents/wordpress_articles/Ordering_files.md"))
+    import os
+    write_xml_file(os.path.join(os.path.dirname(__file__), "../testfile.xml"), convert_md_file(os.path.join(os.path.dirname(__file__), "../testfile.md")))

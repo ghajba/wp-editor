@@ -116,7 +116,7 @@ class Configuration:
         """This method returns all configuration elements which can appear only at the beginning of a line"""
         return sorted([k for k, v in self.__configuration.items() if v.is_starter()], key=len, reverse=True)
 
-    def get_comlex(self):
+    def get_complex(self):
         """This method returns all the complex configuration elements"""
         return sorted([k for k, v in self.__configuration.items() if v.is_complex()], key=len, reverse=True)
 
