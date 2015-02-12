@@ -50,8 +50,11 @@ The markdown file is parsed and you can place special lines at the beginning of 
 [tags] tag 1, tag 2, tag 3 -- a comma separated list for your post. Optional, if not provided there will be no tags set.
                       
 ## Extra markdown
-~~~~~~~~ (tilde symbol 8 times) Surrounds code blocks which will be presented as *[sourcecode]* in WordPess.
+Currently these extra markdonw symbols are configured for wpedit:
+
+~~~~~~~~ (tilde symbol 8 times) Surrounds code blocks which will be presented as *[sourcecode]* in WordPess. Source code blocks can be enriched with key-value pairs to represent parameters of **[sourcecode]** blocks.
+~~~~~~~~{'language':'python', 'title':'Python source code example'} This line will be converted to: **[sourcecode language="python" title="Python source code example"]**
 
 -------- (dash 8 times) Adds a read more tag to your article which will be presented as *<!--more-->* in WordPress.
 
-@@@ (at symbol 3 times) Makes the surrounded text preformatted which will be presented as *<pre>* in WordPRess.
+@@@ (at symbol 3 times) Makes the surrounded text preformatted which will be presented as *&lt;pre&gt;* in WordPRess.
