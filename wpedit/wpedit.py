@@ -6,10 +6,13 @@ from wordpress_xmlrpc import Client
 from wordpress_xmlrpc import WordPressPost
 from wordpress_xmlrpc.methods import posts
 from os.path import expanduser
+from xml2md import xml2md
+from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one
 
+import inspect
 
 def convert_file(filename):
-    input_lines = mdxml.get_file_lines(filename)
+    input_lines = read_file_lines(filename)
     starter = 0
     title = None
     categories = None
@@ -31,11 +34,16 @@ def convert_file(filename):
     return id, title, categories, tags, content
 
 
+def get_client(configuration):
+    client = Client(configuration['endpoint'], configuration["username"], configuration['password'])
+    return client
+
+
 def send_to_wordpress(id, title, categories, tags, content, configuration):
     if len(content.strip()) == 0:
         return
 
-    client = Client(configuration['endpoint'], configuration["username"], configuration['password'])
+    client = get_client(configuration)
 
     if id:
         post = client.call(posts.GetPost(id))
@@ -58,22 +66,87 @@ def send_to_wordpress(id, title, categories, tags, content, configuration):
         post.id = client.call(posts.NewPost(post))
 
     print "Blog post with id " + post.id + " was successfully sent to WordPress."
+    return post.id
+
+
+def add_post_id_to_original(filename, id):
+    write_line_at_beginning(filename, "[id] " + id)
+
+
+def create_filename(title):
+    """Converts the title of the post to a filename."""
+    filename = title.replace(" ", "_") + ".md"
+    return filename
+
+
+def load_drafts(configuration):
+    """Loads all draft posts from WordPress"""
+    client = get_client(configuration)
+    draft_posts = client.call(posts.GetPosts({'post_status': 'draft'}))
+    return draft_posts
+
+
+def get_draft_parameters(draft):
+    categories = ""
+    tags = ""
+    #attributes = inspect.getmembers(WordPressPost, lambda a:not(inspect.isroutine(a)))
+    #print [a[0] for a in attributes if not(a[0].startswith('__') and a[0].endswith('__'))]
+    #definition = draft.definition
+    #print draft
+    term = draft.terms
+    if term:
+        if "categoriy" in term:
+            print term[categories]
+        if "post_tag" in term:
+            print term[tags]
+    return draft.id, draft.title, categories, tags, draft.content
+
+
+def convert_to_markdown(id, title, categories, tags, content):
+    result = "[id] " + id + "\n"
+    result += "[title] " + title + "\n"
+    if categories:
+        result += "[categories] " + categories + "\n"
+    if tags:
+        result += "[tags] " + tags + "\n"
+    result += "\n"
+    result += xml2md(content)
+    return result
+
+
+def export_drafts(configuration, target_folder):
+    drafts = load_drafts(configuration)
+    for draft in drafts:
+        id, title, categories, tags, content = get_draft_parameters(draft)
+        filename = create_filename(title)
+        markdown_content = convert_to_markdown(id, title, categories, tags, content)
+        write_file(target_folder, filename, markdown_content)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c","--config",
+    parser.add_argument("-c", "--config",
                         help="The full path of the configuration file storing the XML-RPC endpoint, username and password. Per default the application looks at your home folder and searches for wpedit.conf")
     parser.add_argument("post_file", help="The full path of the input file to send to WordPress.")
     parser.add_argument("-m", "--mdconf", help="The full path of the md-to-xml conversion-extension file")
+    parser.add_argument("-l", "--load",
+                        help="Loads all draft posts into the folder where the 'post_file' resides. The 'post_file' will not be sent to WordPress.", action="store_true")
     args = parser.parse_args()
 
     configuration = {}
-    config_file = expanduser("~")+'/wpedit.conf'
+    config_file = expanduser("~") + '/wpedit.conf'
     if args.config:
         config_file = args.config
     execfile(config_file, configuration)
 
     mdxml.init()
-    id, title, categories, tags, content = convert_file(args.post_file)
-    send_to_wordpress(id, title, categories, tags, content, configuration)
+    if args.load:
+        import os
+        content = read_file_as_one(os.path.join(os.path.dirname(__file__), "../testfile.xml"))
+        target_folder = get_folder_name(args.post_file)
+        export_drafts(configuration, target_folder)
+    else:
+        id, title, categories, tags, content = convert_file(args.post_file)
+        post_id = send_to_wordpress(id, title, categories, tags, content, configuration)
+        if not id and post_id:
+            add_post_id_to_original(args.post_file, post_id)

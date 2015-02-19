@@ -4,6 +4,7 @@ This file loads and maintains the configuration of the application
 
 import os
 
+
 class ConfigurationElement:
     def __init__(self, marker, begin, end=None, multiline=False, starter=False, complex=False):
         self.__marker = marker
@@ -122,4 +123,5 @@ class Configuration:
 
     def get_normal(self):
         """This method returns the normal configuration elements which are not complex and not starter"""
-        return sorted([k for k, v in self.__configuration.items() if not v.is_starter() and not v.is_complex()],key=len, reverse=True)
+        return sorted([k for k, v in self.__configuration.items() if not v.is_starter() and not v.is_complex()],
+                      key=len, reverse=True)

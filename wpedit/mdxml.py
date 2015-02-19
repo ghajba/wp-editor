@@ -6,12 +6,11 @@ along the defined rules of the conversion.
 """
 
 import re
-import codecs
 
 from markdown import markdown
 
 from configuration import Configuration
-
+from file_utils import read_file_lines
 
 configuration = Configuration()
 
@@ -83,15 +82,8 @@ def find_marker_occurrences(xmlline, marker):
     return [(a.start(), a.end()) for a in list(re.finditer(re.escape(marker), xmlline))]
 
 
-def get_file_lines(filename):
-    input_file = codecs.open(filename, mode="r", encoding="utf-8")
-    input_lines = input_file.readlines()
-    input_file.close()
-    return input_lines
-
-
 def convert_md_file(filename):
-    return convert_lines(get_file_lines(filename))
+    return convert_lines(read_file_lines(filename))
 
 
 def write_xml_file(filename, content):
