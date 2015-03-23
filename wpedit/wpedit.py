@@ -7,9 +7,11 @@ from wordpress_xmlrpc import WordPressPost
 from wordpress_xmlrpc.methods import posts, taxonomies
 from os.path import expanduser
 from xml2md import xml2md
-from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one, user_edited_later
+from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one, \
+    user_edited_later
 
 import inspect
+
 
 def convert_file(filename):
     input_lines = read_file_lines(filename)
@@ -82,7 +84,7 @@ def create_filename(title):
 def load_drafts(configuration):
     """Loads all draft posts from WordPress"""
     client = get_client(configuration)
-    draft_posts = client.call(posts.GetPosts({'post_status': 'draft', 'number':'25'}))
+    draft_posts = client.call(posts.GetPosts({'post_status': 'draft', 'number': '25'}))
     return draft_posts
 
 
@@ -111,15 +113,18 @@ def convert_to_markdown(id, title, categories, tags, content):
     result += xml2md(content)
     return result
 
+
 def load_tags(configuration):
     client = get_client(configuration)
     tags = client.call(taxonomies.GetTerms('post_tag'))
-    #print tags
+    # print tags
+
 
 def load_categories(configuration):
     client = get_client(configuration)
     categories = client.call(taxonomies.GetTerms('category'))
-    #print categories
+    # print categories
+
 
 def export_drafts(configuration, target_folder):
     drafts = load_drafts(configuration)
@@ -130,17 +135,20 @@ def export_drafts(configuration, target_folder):
             markdown_content = convert_to_markdown(id, title, categories, tags, content)
             write_file(target_folder, filename, markdown_content)
         else:
-            print("The file {0} has beed modified locally later than at the blog, it won't be overwritten.".format(filename))
+            print(
+            "The file {0} has beed modified locally later than at the blog, it won't be overwritten.".format(filename))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config",
                         help="The full path of the configuration file storing the XML-RPC endpoint, username and password. Per default the application looks at your home folder and searches for wpedit.conf")
-    parser.add_argument("post_file", help="The full path of the input file to send to WordPress.")
+    parser.add_argument("post_file",
+                        help="The full path of the input file to send to WordPress.  If used with the '-l' option it is the full path of the folder to save the drafts from WordPress.")
     parser.add_argument("-m", "--mdconf", help="The full path of the md-to-xml conversion-extension file")
     parser.add_argument("-l", "--load",
-                        help="Loads all draft posts into the folder where the 'post_file' resides. The 'post_file' will not be sent to WordPress.", action="store_true")
+                        help="Loads all draft posts into the folder where the 'post_file' resides. The 'post_file' will not be sent to WordPress.",
+                        action="store_true")
     args = parser.parse_args()
 
     configuration = {}
@@ -150,14 +158,16 @@ if __name__ == "__main__":
     execfile(config_file, configuration)
 
     mdxml.init()
-    load_tags(configuration)
-    load_categories(configuration)
+
     if args.load:
         import os
+
         content = read_file_as_one(os.path.join(os.path.dirname(__file__), "../testfile.xml"))
         target_folder = get_folder_name(args.post_file)
         export_drafts(configuration, target_folder)
     else:
+        load_tags(configuration)
+        load_categories(configuration)
         id, title, categories, tags, content = convert_file(args.post_file)
         post_id = send_to_wordpress(id, title, categories, tags, content, configuration)
         if not id and post_id:
