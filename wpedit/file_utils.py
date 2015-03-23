@@ -1,7 +1,9 @@
 __author__ = 'GHajba'
 
 from codecs import open
-from os.path import dirname, abspath, isfile
+from os.path import dirname, abspath, isfile, getmtime
+from time import ctime
+from datetime import datetime
 
 
 def write_line_at_beginning(filename, line):
@@ -37,3 +39,10 @@ def write_file(folder, filename, content):
     output_file = open(folder + "/" + filename, mode="w", encoding="utf-8")
     output_file.writelines(content)
     output_file.close()
+
+
+def user_edited_later(folder, filename, modified):
+    folder_filename = folder + '/' + filename
+    if not isfile(folder_filename):
+        return False
+    return modified < datetime.strptime(ctime(getmtime(folder_filename)), "%a %b %d %H:%M:%S %Y")

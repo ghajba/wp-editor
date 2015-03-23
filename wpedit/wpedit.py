@@ -7,7 +7,7 @@ from wordpress_xmlrpc import WordPressPost
 from wordpress_xmlrpc.methods import posts, taxonomies
 from os.path import expanduser
 from xml2md import xml2md
-from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one
+from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one, user_edited_later
 
 import inspect
 
@@ -82,7 +82,7 @@ def create_filename(title):
 def load_drafts(configuration):
     """Loads all draft posts from WordPress"""
     client = get_client(configuration)
-    draft_posts = client.call(posts.GetPosts({'post_status': 'draft'}))
+    draft_posts = client.call(posts.GetPosts({'post_status': 'draft', 'number':'25'}))
     return draft_posts
 
 
@@ -96,7 +96,8 @@ def get_draft_parameters(draft):
                 categories.append(term.id)
             if "post_tag" == term.taxonomy:
                 tags.append(term.id)
-    return draft.id, draft.title, categories, tags, draft.content
+
+    return draft.id, draft.title, categories, tags, draft.content, draft.date_modified
 
 
 def convert_to_markdown(id, title, categories, tags, content):
@@ -123,10 +124,13 @@ def load_categories(configuration):
 def export_drafts(configuration, target_folder):
     drafts = load_drafts(configuration)
     for draft in drafts:
-        id, title, categories, tags, content = get_draft_parameters(draft)
+        id, title, categories, tags, content, modified = get_draft_parameters(draft)
         filename = create_filename(title)
-        markdown_content = convert_to_markdown(id, title, categories, tags, content)
-        write_file(target_folder, filename, markdown_content)
+        if not user_edited_later(target_folder, filename, modified):
+            markdown_content = convert_to_markdown(id, title, categories, tags, content)
+            write_file(target_folder, filename, markdown_content)
+        else:
+            print("The file {0} has beed modified locally later than at the blog, it won't be overwritten.".format(filename))
 
 
 if __name__ == "__main__":
