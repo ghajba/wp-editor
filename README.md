@@ -63,3 +63,12 @@ Currently these extra markdonw symbols are configured for wpedit:
 -------- (dash 8 times) Adds a read more tag to your article which will be presented as *<!--more-->* in WordPress.
 
 @@@ (at symbol 3 times) Makes the surrounded text preformatted which will be presented as *&lt;pre&gt;* in WordPRess.
+
+## Changes
+
+### Version 0.3
+
+ *  Starting with version 0.3 you can download your draft posts (currently the latest 25 in reverse-chronological order (based on their publish date)) (I plan to add an option to configure the maximum number to load)
+ * **tags** and **categories** are loaded with your posts
+ * If you altered the draft locally it will not get overwritten (I plan to add a command line argument to force updates)
+ * downloading of source code and "more"-tags work properly
