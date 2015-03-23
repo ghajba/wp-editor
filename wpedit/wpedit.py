@@ -4,7 +4,7 @@ import argparse
 import mdxml
 from wordpress_xmlrpc import Client
 from wordpress_xmlrpc import WordPressPost
-from wordpress_xmlrpc.methods import posts
+from wordpress_xmlrpc.methods import posts, taxonomies
 from os.path import expanduser
 from xml2md import xml2md
 from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one
@@ -87,18 +87,15 @@ def load_drafts(configuration):
 
 
 def get_draft_parameters(draft):
-    categories = ""
-    tags = ""
-    #attributes = inspect.getmembers(WordPressPost, lambda a:not(inspect.isroutine(a)))
-    #print [a[0] for a in attributes if not(a[0].startswith('__') and a[0].endswith('__'))]
-    #definition = draft.definition
-    #print draft
-    term = draft.terms
-    if term:
-        if "categoriy" in term:
-            print term[categories]
-        if "post_tag" in term:
-            print term[tags]
+    categories = []
+    tags = []
+    terms = draft.terms
+    if terms:
+        for term in terms:
+            if "categoriy" == term.taxonomy:
+                categories.append(term.id)
+            if "post_tag" == term.taxonomy:
+                tags.append(term.id)
     return draft.id, draft.title, categories, tags, draft.content
 
 
@@ -106,13 +103,22 @@ def convert_to_markdown(id, title, categories, tags, content):
     result = "[id] " + id + "\n"
     result += "[title] " + title + "\n"
     if categories:
-        result += "[categories] " + categories + "\n"
+        result += "[categories] " + ','.join(categories) + "\n"
     if tags:
-        result += "[tags] " + tags + "\n"
+        result += "[tags] " + ','.join(tags) + "\n"
     result += "\n"
     result += xml2md(content)
     return result
 
+def load_tags(configuration):
+    client = get_client(configuration)
+    tags = client.call(taxonomies.GetTerms('post_tag'))
+    #print tags
+
+def load_categories(configuration):
+    client = get_client(configuration)
+    categories = client.call(taxonomies.GetTerms('category'))
+    #print categories
 
 def export_drafts(configuration, target_folder):
     drafts = load_drafts(configuration)
@@ -140,6 +146,8 @@ if __name__ == "__main__":
     execfile(config_file, configuration)
 
     mdxml.init()
+    load_tags(configuration)
+    load_categories(configuration)
     if args.load:
         import os
         content = read_file_as_one(os.path.join(os.path.dirname(__file__), "../testfile.xml"))
