@@ -117,13 +117,11 @@ def convert_to_markdown(id, title, categories, tags, content):
 def load_tags(configuration):
     client = get_client(configuration)
     tags = client.call(taxonomies.GetTerms('post_tag'))
-    # print tags
 
 
 def load_categories(configuration):
     client = get_client(configuration)
     categories = client.call(taxonomies.GetTerms('category'))
-    # print categories
 
 
 def export_drafts(configuration, target_folder, draft_count, update):
@@ -167,8 +165,6 @@ if __name__ == "__main__":
     mdxml.init()
 
     if args.load:
-        # import os
-        #content = read_file_as_one(os.path.join(os.path.dirname(__file__), "../testfile.xml"))
         draft_count = args.number
         target_folder = get_folder_name(args.post_file)
         export_drafts(configuration, target_folder, draft_count, args.update)
