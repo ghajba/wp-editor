@@ -66,6 +66,11 @@ Currently these extra markdonw symbols are configured for wpedit:
 
 ## Changes
 
+### Version 0.3.1
+
+ * force parameter added to update every draft even if it was changed locally later than on the server
+ * number of fetched drafts is defineable from the command line as an argument, the default stays as 25
+
 ### Version 0.3
 
  *  Starting with version 0.3 you can download your draft posts (currently the latest 25 in reverse-chronological order (based on their publish date)) (I plan to add an option to configure the maximum number to load)
