@@ -89,6 +89,11 @@ def load_drafts(configuration, draft_count):
 
 
 def get_draft_parameters(draft):
+    """
+    Loads all parameters from the draft
+    :param draft: the draft which is loaded
+    :return: the id, title, categories, tags, content and modified date of the draft
+    """
     categories = []
     tags = []
     terms = draft.terms
@@ -115,13 +120,23 @@ def convert_to_markdown(id, title, categories, tags, content):
 
 
 def load_tags(configuration):
+    """
+    Loads already defined and used tags from WordPress.
+    :param configuration:  the configuration to enable a connection with WordPress.
+    :return: the list of defined tags
+    """
     client = get_client(configuration)
-    tags = client.call(taxonomies.GetTerms('post_tag'))
+    return client.call(taxonomies.GetTerms('post_tag'))
 
 
 def load_categories(configuration):
+    """
+    Loads already defined categories from WordPress.
+    :param configuration: the configuration to enable a connection with WordPress.
+    :return: the list of defined categories
+    """
     client = get_client(configuration)
-    categories = client.call(taxonomies.GetTerms('category'))
+    return client.call(taxonomies.GetTerms('category'))
 
 
 def export_drafts(configuration, target_folder, draft_count, update):
@@ -136,6 +151,36 @@ def export_drafts(configuration, target_folder, draft_count, update):
             print(
                 "The file {0} has beed modified locally later than at the blog, it won't be overwritten.".format(
                     filename))
+
+
+def verify_categories(categories, defined_categories):
+    """
+    Verifies each category of the post if it is already defined or not. Categories have to be defined.
+    :param categories: the categories of the post
+    :param defined_categories: the defined categories in the blog
+    :return: True if the categories are empty or are already defined, False if the category is unknown
+    """
+    for category in categories:
+        if category not in defined_categories:
+            print(
+            'Category "{0}" is not defined for this blog. Please define it through the WordPress User Interface.'.format(
+                category))
+            return False
+    return True
+
+
+def verify_tags(tags, defined_tags):
+    """
+    Verifies each tag of the post if it is already defined or not. Tags do not have to be defined per default.
+    :param tags: the tags of the post
+    :param defined_tags: the already defined and used tags of the blog
+    :return: True if the tags are empty or are already defined, False if the tag is unknown
+    """
+    for tag in tags:
+        if tag not in defined_tags:
+            print('Tag "{0}" is not defined for this blog.'.format(category))
+            return False
+    return True
 
 
 if __name__ == "__main__":
@@ -154,6 +199,9 @@ if __name__ == "__main__":
     parser.add_argument('-U', '--update',
                         help="Forces update of every draft loaded, the check for local modifications is disabled. Works only in combination with the '-l' argument.",
                         action="store_true")
+    parser.add_argument('-V', '--verify',
+                        help="Enables verification of tags. If the blog post contains tags which are not defined, the article will not be sent to WordPress.",
+                        action='store_true')
     args = parser.parse_args()
 
     configuration = {}
@@ -169,9 +217,15 @@ if __name__ == "__main__":
         target_folder = get_folder_name(args.post_file)
         export_drafts(configuration, target_folder, draft_count, args.update)
     else:
-        load_tags(configuration)
-        load_categories(configuration)
+        defined_tags = load_tags(configuration)
+        defined_categories = load_categories(configuration)
         id, title, categories, tags, content = convert_file(args.post_file)
+        if not verify_categories(categories, defined_categories):
+            print("Category-verification failed for {0}, post is not sent to WordPress.".format(args.post_file))
+            exit()
+        if args.verify and not verify_tags(tags, defined_tags):
+            print("Tag-verification failed for {0}, post is not sent to WordPress.".format(args.post_file))
+            exit()
         post_id = send_to_wordpress(id, title, categories, tags, content, configuration)
         if not id and post_id:
             add_post_id_to_original(args.post_file, post_id)
