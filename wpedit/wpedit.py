@@ -81,10 +81,10 @@ def create_filename(title):
     return filename
 
 
-def load_drafts(configuration):
+def load_drafts(configuration, draft_count):
     """Loads all draft posts from WordPress"""
     client = get_client(configuration)
-    draft_posts = client.call(posts.GetPosts({'post_status': 'draft', 'number': '25'}))
+    draft_posts = client.call(posts.GetPosts({'post_status': 'draft', 'number': str(draft_count)}))
     return draft_posts
 
 
@@ -126,17 +126,18 @@ def load_categories(configuration):
     # print categories
 
 
-def export_drafts(configuration, target_folder):
-    drafts = load_drafts(configuration)
+def export_drafts(configuration, target_folder, draft_count, update):
+    drafts = load_drafts(configuration, draft_count)
     for draft in drafts:
         id, title, categories, tags, content, modified = get_draft_parameters(draft)
         filename = create_filename(title)
-        if not user_edited_later(target_folder, filename, modified):
+        if update or not user_edited_later(target_folder, filename, modified):
             markdown_content = convert_to_markdown(id, title, categories, tags, content)
             write_file(target_folder, filename, markdown_content)
         else:
             print(
-            "The file {0} has beed modified locally later than at the blog, it won't be overwritten.".format(filename))
+                "The file {0} has beed modified locally later than at the blog, it won't be overwritten.".format(
+                    filename))
 
 
 if __name__ == "__main__":
@@ -149,6 +150,12 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--load",
                         help="Loads all draft posts into the folder where the 'post_file' resides. The 'post_file' will not be sent to WordPress.",
                         action="store_true")
+    parser.add_argument('-n', '--number',
+                        help="The number of draft posts to load. Works only in combination with the '-l' argument.",
+                        default=25)
+    parser.add_argument('-U', '--update',
+                        help="Forces update of every draft loaded, the check for local modifications is disabled. Works only in combination with the '-l' argument.",
+                        action="store_true")
     args = parser.parse_args()
 
     configuration = {}
@@ -160,11 +167,11 @@ if __name__ == "__main__":
     mdxml.init()
 
     if args.load:
-        import os
-
-        content = read_file_as_one(os.path.join(os.path.dirname(__file__), "../testfile.xml"))
+        # import os
+        #content = read_file_as_one(os.path.join(os.path.dirname(__file__), "../testfile.xml"))
+        draft_count = args.number
         target_folder = get_folder_name(args.post_file)
-        export_drafts(configuration, target_folder)
+        export_drafts(configuration, target_folder, draft_count, args.update)
     else:
         load_tags(configuration)
         load_categories(configuration)
