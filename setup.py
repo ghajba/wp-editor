@@ -10,7 +10,7 @@ setup(
     author='Gabor Laszlo Hajba',
     author_email='gabor.hajba@gmail.com',
     url='https://github.com/ghajba/wp-editor',
-    download_url='https://github.com/ghajba/wp-editor/tarball/0.3',
+    download_url='https://github.com/ghajba/wp-editor/tarball/0.3.1',
     keywords=['wordpress', 'offline', 'edit', 'markdown', 'xml'],
     classifiers=['Programming Language :: Python',
                  'License :: OSI Approved :: MIT License', ],
