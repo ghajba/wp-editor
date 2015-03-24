@@ -5,7 +5,7 @@ from disttest import test
 setup(
     name='wpedit',
     packages=['wpedit'],
-    version='0.3',
+    version='0.3.1',
     description='Sends (offline) articles written in MarkDown to WordPress via the XML-RPC API, and loads the draft articles from WordPress to the local machine.',
     author='Gabor Laszlo Hajba',
     author_email='gabor.hajba@gmail.com',
