@@ -21,26 +21,35 @@ The application looks for the configuration file (containing wordpress endpoint,
 
 
 ## Usage
-    usage: wpedit.py [-h] [-c CONFIG] [-m MDCONF] [-l] post_file
+    wpedit.py [-h] [-c CONFIG] [-m MDCONF] [-l] [-n NUMBER] [-U] [-V] post_file
 
-    positional arguments:
-    post_file             The full path of the input file to send to WordPress.
+positional arguments:
+  post_file             The full path of the input file to send to WordPress.
                         If used with the '-l' option it is the full path of
                         the folder to save the drafts from WordPress.
 
-    optional arguments:
-    -h, --help            show this help message and exit
-    -c CONFIG, --config CONFIG
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
                         The full path of the configuration file storing the
                         XML-RPC endpoint, username and password. Per default
                         the application looks at your home folder and searches
                         for wpedit.conf
-    -m MDCONF, --mdconf MDCONF
+  -m MDCONF, --mdconf MDCONF
                         The full path of the md-to-xml conversion-extension
                         file
-    -l, --load            Loads all draft posts into the folder where the
+  -l, --load            Loads all draft posts into the folder where the
                         'post_file' resides. The 'post_file' will not be sent
                         to WordPress.
+  -n NUMBER, --number NUMBER
+                        The number of draft posts to load. Works only in
+                        combination with the '-l' argument.
+  -U, --update          Forces update of every draft loaded, the check for
+                        local modifications is disabled. Works only in
+                        combination with the '-l' argument.
+  -V, --verify          Enables verification of tags. If the blog post
+                        contains tags which are not defined, the article will
+                        not be sent to WordPress.
 
 ## File structure
 The markdown file is parsed and you can place special lines at the beginning of the text. These special lines have to start with **[** (square bracket). Once the parser encounters a line which does not start with **[** the resulting text is treated as the content of the article.
@@ -50,9 +59,9 @@ The markdown file is parsed and you can place special lines at the beginning of 
 
 [title] Some title -- you can specify the post's title here, in the example "Some title" will be the title of the article. If you do not provide a title and the post does not have a title, the title will be set to "My post".
 
-[categories] Category 1, Category 2 -- a comma separated list of categories for your post. Optional, if not provided there will be no categories set.
+[categories] Category 1, Category 2 -- a comma separated list of categories for your post. Optional, if not provided there will be no categories set. Starting with Version 0.3.1 categories are verified: if a category does not exist in the blog, you cannot post the entry.
 
-[tags] tag 1, tag 2, tag 3 -- a comma separated list for your post. Optional, if not provided there will be no tags set.
+[tags] tag 1, tag 2, tag 3 -- a comma separated list for your post. Optional, if not provided there will be no tags set. Starting with Version 0.3.1 optional tag-verification is enabled. If you have the option enabled you can use only defined tags in your post.
 
 ## Extra markdown
 Currently these extra markdonw symbols are configured for wpedit:
@@ -70,6 +79,8 @@ Currently these extra markdonw symbols are configured for wpedit:
 
  * force parameter added to update every draft even if it was changed locally later than on the server
  * number of fetched drafts is defineable from the command line as an argument, the default stays as 25
+ * categories are always verified when posting to WordPress: if a category is not defined in the blog, the post won't be sent to the blog
+ * optional tag-verification can be enabled: if enabled and a new tag is defined in the post, the post will be rejected and not sent to WordPress
 
 ### Version 0.3
 
