@@ -1,6 +1,5 @@
 __author__ = 'GHajba'
 from distutils.core import setup
-from disttest import test
 
 setup(
     name='wpedit',
@@ -11,14 +10,8 @@ setup(
     author_email='gabor.hajba@gmail.com',
     url='https://github.com/ghajba/wp-editor',
     download_url='https://github.com/ghajba/wp-editor/tarball/0.3.4',
-    keywords=['wordpress', 'offline', 'edit', 'markdown', 'xml'],
+    keywords=['wordpress', 'offline', 'edit', 'markdown', 'xml', 'editor'],
     classifiers=['Programming Language :: Python',
                  'License :: OSI Approved :: MIT License', ],
-    options={
-        'test':{
-            'test_dir':['tests']
-        },
-    },
-    cmdclass = {'test':test},
     requires=[('Markdown'), ("python.wordpress.xmlrpc")],
 )

@@ -75,6 +75,14 @@ Currently these extra markdonw symbols are configured for wpedit:
 @@@ (at symbol 3 times) Makes the surrounded text preformatted which will be presented as <i>&lt;pre&gt;</i> in WordPRess.
 
 <h2>Changes</h2>
+<h3>Version 0.3.4</h3>
+<ul>
+    <li>fixed installation error (issue #1) with removing disttest from the setup</li>
+</ul>
+<h3>Versions 0.3.2 and 0.3.3</h3>
+<ul>
+    <li>fixed README displayed in PyPI -- I ended up with an HTML version</li>
+<ul>
 <h3>Version 0.3.1</h3>
 <ul>
     <li>force parameter added to update every draft even if it was changed locally later than on the server</li>

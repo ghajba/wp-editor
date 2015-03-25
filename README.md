@@ -75,6 +75,14 @@ Currently these extra markdonw symbols are configured for wpedit:
 
 ## Changes
 
+### Version 0.3.4
+
+ * fixed installation error (issue #1) with removing disttest from the setup
+
+### Versions 0.3.2 and 0.3.3
+
+ * fixed README displayed in PyPI -- I ended up with an HTML version
+
 ### Version 0.3.1
 
  * force parameter added to update every draft even if it was changed locally later than on the server
@@ -84,7 +92,7 @@ Currently these extra markdonw symbols are configured for wpedit:
 
 ### Version 0.3
 
- *  Starting with version 0.3 you can download your draft posts (currently the latest 25 in reverse-chronological order (based on their publish date)) (I plan to add an option to configure the maximum number to load)
+ *  Starting with version 0.3 you can download your draft posts (currently the latest 25 in reverse-chronological order (based on their publish date))
  * **tags** and **categories** are loaded with your posts
- * If you altered the draft locally it will not get overwritten (I plan to add a command line argument to force updates)
+ * If you altered the draft locally it will not get overwritten 
  * downloading of source code and "more"-tags work properly
