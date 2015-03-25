@@ -1,5 +1,7 @@
 This is a simple module meant to convert Markdown files to XML (XHTML) and send them to WordPress.com via ~~REST~~ XML-RPC.
 
+The application is available at PyPI for install: https://pypi.python.org/pypi/wpedit
+
 The idea behind this all is to make the base of an open-source offline WordPress.com blog entry editor.
 
 The first part converts the text written in a specific MarkDown language to XML (or XHTML).
