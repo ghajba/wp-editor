@@ -99,10 +99,10 @@ def get_draft_parameters(draft):
     terms = draft.terms
     if terms:
         for term in terms:
-            if "categoriy" == term.taxonomy:
-                categories.append(term.id)
+            if "category" == term.taxonomy:
+                categories.append(term.name)
             if "post_tag" == term.taxonomy:
-                tags.append(term.id)
+                tags.append(term.name)
 
     return draft.id, draft.title, categories, tags, draft.content, draft.date_modified
 
