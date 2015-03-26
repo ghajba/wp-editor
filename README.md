@@ -68,12 +68,14 @@ The markdown file is parsed and you can place special lines at the beginning of 
 ## Extra markdown
 Currently these extra markdonw symbols are configured for wpedit:
 
-~~~~~~~~ (tilde symbol 8 times) Surrounds code blocks which will be presented as *[sourcecode]* in WordPess. Source code blocks can be enriched with key-value pairs to represent parameters of **[sourcecode]** blocks.
-~~~~~~~~{'language':'python', 'title':'Python source code example'} This line will be converted to: **[sourcecode language="python" title="Python source code example"]**
+<dl>
+<dt>~~~~~~~~ (tilde symbol 8 times)</dt> <dd>Surrounds code blocks which will be presented as *[sourcecode]* in WordPess. Source code blocks can be enriched with key-value pairs to represent parameters of <b>[sourcecode]</b> blocks.
+~~~~~~~~{'language':'python', 'title':'Python source code example'} This line will be converted to: <b>[sourcecode language="python" title="Python source code example"]</b></dd>
 
--------- (dash 8 times) Adds a read more tag to your article which will be presented as *<!--more-->* in WordPress.
+<dt>-------- (dash 8 times)</dt> <dd>Adds a read more tag to your article which will be presented as *<!--more-->* in WordPress.</dd>
 
-@@@ (at symbol 3 times) Makes the surrounded text preformatted which will be presented as *&lt;pre&gt;* in WordPRess.
+<dt>@@@ ("at" symbol 3 times)</dt> <dd>Makes the surrounded text preformatted which will be presented as <i>&lt;pre&gt;</i> in WordPRess.</dd>
+</dl>
 
 ## Changes
 
