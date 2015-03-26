@@ -79,6 +79,10 @@ Currently these extra markdonw symbols are configured for wpedit:
 
 ## Changes
 
+### Version 0.4.1
+
+ * fixed category and tag validation bug
+
 ### Version 0.4
 
  * added proxy to the configuration file to enable working from proxied network

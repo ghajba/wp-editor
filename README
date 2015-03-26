@@ -75,6 +75,10 @@ Currently these extra markdonw symbols are configured for wpedit:
 <dt>@@@ ("at" symbol 3 times)</dt> <dd>Makes the surrounded text preformatted which will be presented as <i>&lt;pre&gt;</i> in WordPRess.</dd>
 </dl>
 <h2>Changes</h2>
+<h3>Version 0.4.1</h3>
+<ul>
+    <li>fixed category and tag validation bug</li>
+</ul>
 <h3>Version 0.4</h3>
 <ul>
     <li>added proxy to the configuration file to enable working from proxied network</li>

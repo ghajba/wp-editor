@@ -24,13 +24,13 @@ def convert_file(filename):
             break
         starter += 1
         if line.startswith("[title]"):
-            title = line[7:]
+            title = line[7:].strip()
         elif line.startswith("[categories]"):
-            categories = line[12:].split(",")
+            categories = [s.strip() for s in line[12:].split(",")]
         elif line.startswith("[tags]"):
-            tags = line[6:].split(",")
+            tags = [s.strip() for s in line[6:].split(",")]
         elif line.startswith("[id]"):
-            id = line[4:]
+            id = line[4:].strip()
     content = mdxml.convert_lines(input_lines[starter:])
     return id, title, categories, tags, content
 
@@ -132,7 +132,7 @@ def load_tags(configuration):
     :return: the list of defined tags
     """
     client = get_client(configuration)
-    return client.call(taxonomies.GetTerms('post_tag'))
+    return [t.name for t in client.call(taxonomies.GetTerms('post_tag'))]
 
 
 def load_categories(configuration):
@@ -142,7 +142,7 @@ def load_categories(configuration):
     :return: the list of defined categories
     """
     client = get_client(configuration)
-    return client.call(taxonomies.GetTerms('category'))
+    return [c.name for c in client.call(taxonomies.GetTerms('category'))]
 
 
 def export_drafts(configuration, target_folder, draft_count, update):
