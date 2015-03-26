@@ -17,7 +17,7 @@ One problem with Markdown is, that you have to parse the whole text if you have 
 
 Feel free to create issues and change requests.
 
-The application looks for the configuration file (containing wordpress endpoint, username, password) in your home folder under the name *wpedit.conf*. Optionally you can provide it per commandline argument.
+The application looks for the configuration file (containing wordpress endpoint, username, password and optional proxy configuration) in your home folder under the name *wpedit.conf*. Optionally you can provide it per commandline argument.
 
 
 <h2>Usage</h2>
@@ -75,6 +75,10 @@ Currently these extra markdonw symbols are configured for wpedit:
 @@@ (at symbol 3 times) Makes the surrounded text preformatted which will be presented as <i>&lt;pre&gt;</i> in WordPRess.
 
 <h2>Changes</h2>
+<h3>Version 0.4</h3>
+<ul>
+    <li>added proxy to the configuration file to enable working from proxyied network</li>
+</ul>
 <h3>Version 0.3.4</h3>
 <ul>
     <li>fixed installation error (issue #1) with removing disttest from the setup</li>
