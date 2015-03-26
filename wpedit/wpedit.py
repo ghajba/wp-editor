@@ -9,9 +9,8 @@ from os.path import expanduser
 from xml2md import xml2md
 from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one, \
     user_edited_later
-import proxy
+from xmlrpc_proxy import HTTPProxyTransport
 
-import inspect
 
 def convert_file(filename):
     input_lines = read_file_lines(filename)
@@ -38,11 +37,13 @@ def convert_file(filename):
 
 def get_proxy(configuration):
     if 'proxy' in configuration and configuration['proxy'] and len(configuration['proxy']):
-        return HTTPProxyTransport({'http':configuration['proxy']})
+        return HTTPProxyTransport({'https': configuration['proxy']})
 
 
 def get_client(configuration):
-    client = Client(configuration['endpoint'], configuration["username"], configuration['password'], transport=get_proxy(configuration))
+    transport = get_proxy(configuration)
+    client = Client(configuration['endpoint'], configuration["username"], configuration['password'],
+                    transport=transport)
     return client
 
 
@@ -72,7 +73,7 @@ def send_to_wordpress(id, title, categories, tags, content, configuration):
     else:
         post.id = client.call(posts.NewPost(post))
 
-    print "Blog post with id " + post.id + " was successfully sent to WordPress."
+    print("Blog post with id " + post.id + " was successfully sent to WordPress.")
     return post.id
 
 
@@ -168,8 +169,8 @@ def verify_categories(categories, defined_categories):
     for category in categories:
         if category not in defined_categories:
             print(
-            'Category "{0}" is not defined for this blog. Please define it through the WordPress User Interface.'.format(
-                category))
+                'Category "{0}" is not defined for this blog. Please define it through the WordPress User Interface.'.format(
+                    category))
             return False
     return True
 
@@ -201,7 +202,8 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--number',
                         help="The number of draft posts to load. Works only in combination with the '-l' argument.",
                         default=25)
-    parser.add_argument('--proxy', help="A proxy configuration to use when working behind a proxied network, example: http://proxy.host:port")
+    parser.add_argument('--proxy',
+                        help="A proxy configuration to use when working behind a proxied network, example: http://proxy.host:port")
     parser.add_argument('-U', '--update',
                         help="Forces update of every draft loaded, the check for local modifications is disabled. Works only in combination with the '-l' argument.",
                         action="store_true")
