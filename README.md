@@ -25,33 +25,33 @@ The application looks for the configuration file (containing wordpress endpoint,
 ## Usage
     wpedit.py [-h] [-c CONFIG] [-m MDCONF] [-l] [-n NUMBER] [-U] [-V] post_file
 
-positional arguments:
-  post_file             The full path of the input file to send to WordPress.
-                        If used with the '-l' option it is the full path of
-                        the folder to save the drafts from WordPress.
+    positional arguments:
+      post_file             The full path of the input file to send to WordPress.
+                            If used with the '-l' option it is the full path of
+                            the folder to save the drafts from WordPress.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -c CONFIG, --config CONFIG
-                        The full path of the configuration file storing the
-                        XML-RPC endpoint, username and password. Per default
-                        the application looks at your home folder and searches
-                        for wpedit.conf
-  -m MDCONF, --mdconf MDCONF
-                        The full path of the md-to-xml conversion-extension
-                        file
-  -l, --load            Loads all draft posts into the folder where the
-                        'post_file' resides. The 'post_file' will not be sent
-                        to WordPress.
-  -n NUMBER, --number NUMBER
-                        The number of draft posts to load. Works only in
-                        combination with the '-l' argument.
-  -U, --update          Forces update of every draft loaded, the check for
-                        local modifications is disabled. Works only in
-                        combination with the '-l' argument.
-  -V, --verify          Enables verification of tags. If the blog post
-                        contains tags which are not defined, the article will
-                        not be sent to WordPress.
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c CONFIG, --config CONFIG
+                            The full path of the configuration file storing the
+                            XML-RPC endpoint, username and password. Per default
+                            the application looks at your home folder and searches
+                            for wpedit.conf
+      -m MDCONF, --mdconf MDCONF
+                            The full path of the md-to-xml conversion-extension
+                            file
+      -l, --load            Loads all draft posts into the folder where the
+                            'post_file' resides. The 'post_file' will not be sent
+                            to WordPress.
+      -n NUMBER, --number NUMBER
+                            The number of draft posts to load. Works only in
+                            combination with the '-l' argument.
+      -U, --update          Forces update of every draft loaded, the check for
+                            local modifications is disabled. Works only in
+                            combination with the '-l' argument.
+      -V, --verify          Enables verification of tags. If the blog post
+                            contains tags which are not defined, the article will
+                            not be sent to WordPress.
 
 ## File structure
 The markdown file is parsed and you can place special lines at the beginning of the text. These special lines have to start with **[** (square bracket). Once the parser encounters a line which does not start with **[** the resulting text is treated as the content of the article.
@@ -100,5 +100,5 @@ Currently these extra markdonw symbols are configured for wpedit:
 
  *  Starting with version 0.3 you can download your draft posts (currently the latest 25 in reverse-chronological order (based on their publish date))
  * **tags** and **categories** are loaded with your posts
- * If you altered the draft locally it will not get overwritten 
+ * If you altered the draft locally it will not get overwritten
  * downloading of source code and "more"-tags work properly
