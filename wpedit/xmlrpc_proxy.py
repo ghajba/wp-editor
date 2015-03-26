@@ -1,21 +1,21 @@
 __author__ = 'GHajba'
 """
-Provides HTTP proxy support for Python's xmlrpclib, via urllib2.
+Provides HTTP and HTTPS proxy support for Python's xmlrpclib, via urllib2.
 
 Usage:
-    transport = HTTPProxyTransport({'http': <proxy host and port as string>,})
+    transport = HTTPProxyTransport({'http': <proxy host and port as string>,'https': <proxy host and port as string>,})
 """
-
 
 import urllib2
 import xmlrpclib
 
 
 class Urllib2Transport(xmlrpclib.Transport):
-    def __init__(self, opener=None, https=False, use_datetime=0):
+    def __init__(self, opener=None, https=False, use_datetime=0, verbose=False):
         xmlrpclib.Transport.__init__(self, use_datetime)
         self.opener = opener or urllib2.build_opener()
         self.https = https
+        self.verbose = verbose
 
     def request(self, host, handler, request_body, verbose=0):
         protocol = ('http', 'https')[bool(self.https)]
@@ -28,4 +28,4 @@ class Urllib2Transport(xmlrpclib.Transport):
 class HTTPProxyTransport(Urllib2Transport):
     def __init__(self, proxies, use_datetime=0):
         opener = urllib2.build_opener(urllib2.ProxyHandler(proxies))
-        Urllib2Transport.__init__(self, opener, use_datetime)
+        Urllib2Transport.__init__(self, opener, https=True, use_datetime=use_datetime)
