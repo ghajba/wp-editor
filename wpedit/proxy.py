@@ -18,8 +18,8 @@ class Urllib2Transport(xmlrpclib.Transport):
         self.https = https
 
     def request(self, host, handler, request_body, verbose=0):
-        proto = ('http', 'https')[bool(self.https)]
-        req = urllib2.Request('%s://%s%s' % (proto, host, handler), request_body)
+        protocol = ('http', 'https')[bool(self.https)]
+        req = urllib2.Request('%s://%s%s' % (protocol, host, handler), request_body)
         req.add_header('User-agent', self.user_agent)
         self.verbose = verbose
         return self.parse_response(self.opener.open(req))

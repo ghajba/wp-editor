@@ -9,9 +9,9 @@ from os.path import expanduser
 from xml2md import xml2md
 from file_utils import write_line_at_beginning, read_file_lines, get_folder_name, write_file, read_file_as_one, \
     user_edited_later
+import proxy
 
 import inspect
-
 
 def convert_file(filename):
     input_lines = read_file_lines(filename)
@@ -36,8 +36,13 @@ def convert_file(filename):
     return id, title, categories, tags, content
 
 
+def get_proxy(configuration):
+    if 'proxy' in configuration and configuration['proxy'] and len(configuration['proxy']):
+        return HTTPProxyTransport({'http':configuration['proxy']})
+
+
 def get_client(configuration):
-    client = Client(configuration['endpoint'], configuration["username"], configuration['password'])
+    client = Client(configuration['endpoint'], configuration["username"], configuration['password'], transport=get_proxy(configuration))
     return client
 
 
@@ -196,6 +201,7 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--number',
                         help="The number of draft posts to load. Works only in combination with the '-l' argument.",
                         default=25)
+    parser.add_argument('--proxy', help="A proxy configuration to use when working behind a proxied network, example: http://proxy.host:port")
     parser.add_argument('-U', '--update',
                         help="Forces update of every draft loaded, the check for local modifications is disabled. Works only in combination with the '-l' argument.",
                         action="store_true")
