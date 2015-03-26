@@ -81,7 +81,7 @@ Currently these extra markdonw symbols are configured for wpedit:
 
 ### Version 0.4
 
- * added proxy to the configuration file to enable working from proxyied network
+ * added proxy to the configuration file to enable working from proxied network
 
 ### Version 0.3.4
 

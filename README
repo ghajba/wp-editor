@@ -77,7 +77,7 @@ Currently these extra markdonw symbols are configured for wpedit:
 <h2>Changes</h2>
 <h3>Version 0.4</h3>
 <ul>
-    <li>added proxy to the configuration file to enable working from proxyied network</li>
+    <li>added proxy to the configuration file to enable working from proxied network</li>
 </ul>
 <h3>Version 0.3.4</h3>
 <ul>
