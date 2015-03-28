@@ -189,7 +189,7 @@ def verify_tags(tags, defined_tags):
     return True
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config",
                         help="The full path of the configuration file storing the XML-RPC endpoint, username and password. Per default the application looks at your home folder and searches for wpedit.conf")
@@ -237,3 +237,6 @@ if __name__ == "__main__":
         post_id = send_to_wordpress(id, title, categories, tags, content, configuration)
         if not id and post_id:
             add_post_id_to_original(args.post_file, post_id)
+
+if __name__ == "__main__":
+    main()

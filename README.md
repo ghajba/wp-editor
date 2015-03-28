@@ -79,6 +79,10 @@ Currently these extra markdonw symbols are configured for wpedit:
 
 ## Changes
 
+### Version 0.4.5
+
+ * fixed starting app as Python module after installation using ***pip***
+
 ### Version 0.4.1
 
  * fixed category and tag validation bug
