@@ -1,3 +1,5 @@
+[![Contact me on Codementor](https://cdn.codementor.io/badges/contact_me_github.svg)](https://www.codementor.io/ghajba?utm_source=github&utm_medium=button&utm_term=ghajba&utm_campaign=github)
+
 This is a simple module meant to convert Markdown files to XML (XHTML) and send them to WordPress.com via ~~REST~~ XML-RPC.
 
 The application is available at PyPI for install: https://pypi.python.org/pypi/wpedit
