@@ -1,5 +1,10 @@
 __author__ = 'GHajba'
+from distutils.command.install import INSTALL_SCHEMES
 from distutils.core import setup
+
+# Credits: http://stackoverflow.com/a/3042436/5091738
+for scheme in INSTALL_SCHEMES.values():
+    scheme['data'] = scheme['purelib']
 
 setup(
     name='wpedit',
@@ -14,4 +19,5 @@ setup(
     classifiers=['Programming Language :: Python',
                  'License :: OSI Approved :: MIT License', ],
     requires=[('Markdown'), ("python.wordpress.xmlrpc")],
+    data_files=[('wpedit', ['wpedit/mdxml.conf'])],
 )
